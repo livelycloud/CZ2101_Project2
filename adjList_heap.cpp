@@ -176,7 +176,7 @@ int main() {
 
     ll ans = K_heap(adjL, V, s, e);
 
-    printf("%d\n", ans);
+    printf("%lld\n", ans);
 
     return 0;   
 
