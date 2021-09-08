@@ -1,10 +1,13 @@
 // C / C++ program for Dijkstra's
 // shortest path algorithm for adjacency
 // list representation of graph
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
- 
+#include <time.h>
+
+
 // A structure to represent a
 // node in adjacency list
 struct AdjListNode
@@ -361,14 +364,14 @@ void dijkstra(struct Graph* graph, int src)
     printArr(dist, V);
 }
  
- 
 // Driver program to test above functions
 int main()
-{
+{   
+    clock_t t;
     // create the graph given in above fugure
     int V = 9;
     struct Graph* graph = createGraph(V);
-    addEdge(graph, 0, 1, 4);
+    addEdge(graph, 0, 1, 4);    // source, destination, weight
     addEdge(graph, 0, 7, 8);
     addEdge(graph, 1, 2, 8);
     addEdge(graph, 1, 7, 11);
@@ -382,8 +385,10 @@ int main()
     addEdge(graph, 6, 7, 1);
     addEdge(graph, 6, 8, 6);
     addEdge(graph, 7, 8, 7);
- 
-    dijkstra(graph, 0);
- 
+    
+    t = clock();
+    dijkstra(graph, 0);     // address of graph, source
+    t = clock() - t;
+    printf("%f\n", ((float)t)/CLOCKS_PER_SEC);
     return 0;
 }
