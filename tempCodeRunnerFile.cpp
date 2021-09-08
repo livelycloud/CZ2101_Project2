@@ -1,1 +1,1 @@
-Node
+#define MAXN 1003

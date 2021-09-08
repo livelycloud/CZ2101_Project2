@@ -30,10 +30,11 @@ void enqueue(pi pq[], pi pair) {
     int i = r;
     pq[r++] = pair;
 
-    while(r > l && pq[i] < pq[i - 1]) { //insertion sort
+    while(i > l && pq[i] < pq[i - 1]) { //insertion sort
         pi tmp = pq[i];
         pq[i] = pq[i - 1];
         pq[i - 1] = tmp;
+        i--;
     }
 }
 
@@ -62,11 +63,13 @@ ll K_array(int adjM[][MAXN], int V, int s, int e)
         pi cur = getMin(pq);
         ll w = cur.first;
         int node = cur.second;
-        flag[node] = true;
-        dis[node] = w;
-        for(int i = 0; i < V; i++) { //O(n)
-            if(!flag[i] && adjM[node][i] != 0){
-                enqueue(pq, make_pair(w + adjM[node][i], i));
+        if(!flag[node]){
+            flag[node] = true;
+            dis[node] = w;
+            for(int i = 0; i < V; i++) { //O(n)
+                if(!flag[i] && adjM[node][i] != 0){
+                    enqueue(pq, make_pair(w + adjM[node][i], i));
+                }
             }
         }
     }
@@ -91,6 +94,7 @@ int main() {
         int j, k, w;
         scanf("%d %d %d", &j, &k, &w);
         adjM[j][k] = w;
+        adjM[k][j] = w;
     }
 
 
