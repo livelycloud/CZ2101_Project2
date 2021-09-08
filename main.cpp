@@ -6,9 +6,8 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <time.h>
-#include <fstream>
 #include <vector>
-#include "main2.cpp" // bringing in the dijkstra's using adj matrix
+using namespace std;
 
 // A structure to represent a
 // node in adjacency list
@@ -366,6 +365,69 @@ void dijkstra(struct Graph* graph, int src)
     //printArr(dist, V);
 }
  
+/////////////////////////////////////////
+// Matrix way
+
+
+// A utility function to find the vertex with minimum distance value, from
+// the set of vertices not yet included in shortest path tree
+int minDistance(int dist[], bool sptSet[], int const_V)
+{
+   
+    // Initialize min value
+    int min = INT_MAX, min_index;
+ 
+    for (int v = 0; v < const_V; v++)
+        if (sptSet[v] == false && dist[v] <= min)
+            min = dist[v], min_index = v;
+ 
+    return min_index;
+}
+ 
+ 
+// Function that implements Dijkstra's single source shortest path algorithm
+// for a graph represented using adjacency matrix representation
+void dijkstra_mat(vector<vector<int>> &graph, int src)
+{   
+    int const_V = graph.size();
+    int dist[const_V]; // The output array.  dist[i] will hold the shortest
+    // distance from src to i
+ 
+    bool sptSet[const_V]; // sptSet[i] will be true if vertex i is included in shortest
+    // path tree or shortest distance from src to i is finalized
+ 
+    // Initialize all distances as INFINITE and stpSet[] as false
+    for (int i = 0; i < const_V; i++)
+        dist[i] = INT_MAX, sptSet[i] = false;
+ 
+    // Distance of source vertex from itself is always 0
+    dist[src] = 0;
+ 
+    // Find shortest path for all vertices
+    for (int count = 0; count < const_V - 1; count++) {
+        // Pick the minimum distance vertex from the set of vertices not
+        // yet processed. u is always equal to src in the first iteration.
+        int u = minDistance(dist, sptSet, const_V);
+ 
+        // Mark the picked vertex as processed
+        sptSet[u] = true;
+ 
+        // Update dist value of the adjacent vertices of the picked vertex.
+        for (int v = 0; v < const_V; v++)
+ 
+            // Update dist[v] only if is not in sptSet, there is an edge from
+            // u to v, and total weight of path from src to  v through u is
+            // smaller than current value of dist[v]
+            if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX
+                && dist[u] + graph[u][v] < dist[v])
+                dist[v] = dist[u] + graph[u][v];
+    }
+ 
+    // print the constructed distance array
+    //printSolution(dist);
+}
+
+
 // Driver program to test above functions
 int main()
 {   
@@ -373,67 +435,62 @@ int main()
     srand(time(NULL));
     
     // create the graph given in above fugure
-    int V = 500;    // rmb to change the V in main2
-    int MAX_WEIGHT, repeat;
-    printf("Enter max weight, repeat ");
-    scanf("%d %d", &MAX_WEIGHT, &repeat);
+    int MAX_WEIGHT, repeat, MAX_V, MAX_EDGE;    // input 1: max edge will have at most n(n-1)/2 edges, input 0: no extra edges
+    printf("Enter max V, max weight, repeat, max edge(1/0) ");
+    scanf("%d %d %d %d", &MAX_V, &MAX_WEIGHT, &repeat, &MAX_EDGE);
 
-    
+    // later test worst case
 
-    // test worst case
-    for (int weight = 1; weight < MAX_WEIGHT; weight += 100){
-        int time_list = 0, time_mat = 0;    // start calc time for each weight
+    for (int V = 2; V < MAX_V; V += 100) {
+        for (int weight = 1; weight < MAX_WEIGHT; weight += 100) {
+            int time_list = 0, time_mat = 0;    // start calc time for each weight
 
-        for (int i = 0; i < repeat; i++) {
-            struct Graph* graph = createGraph(V); // dijkstra using adj list
-            int graph2[const_V][const_V] = {0};   // dijkstra using adj matrix
+            for (int i = 0; i < repeat; i++) {
+                struct Graph* graph = createGraph(V); // dijkstra using adj list
+                vector<vector<int>> graph2(V, vector<int> (V, 0));  // dijkstra using adj matrix (vector)
 
-            // this will create a spanning tree / connected graph with n-1 edges (what abt more edges than this)
-            for (int i = 1; i < V; i++) {
-                int random_vertex = rand() % i; // connect to someone smaller
-                int random_weight = rand() % weight;
-                addEdge(graph, random_vertex, i, random_weight);    // add edge to the adj_list graph
-                // source, destination, weight
-                graph2[random_vertex][i] = random_weight;
-                graph2[i][random_vertex] = random_weight;
+                // this will create a spanning tree / connected graph with n-1 edges (what abt more edges than this)
+                for (int i = 1; i < V; i++) {
+                    int random_vertex = rand() % i; // connect to someone smaller
+                    int random_weight = rand() % weight;
+                    addEdge(graph, random_vertex, i, random_weight);    // add edge to the adj_list graph
+                    // source, destination, weight
+                    graph2[random_vertex][i] = random_weight;
+                    graph2[i][random_vertex] = random_weight;
 
-                //printf("%d %d\n", random_vertex, random_weight);
-            }
-
-            int extra_edge = 0; //rand() % (V*(V-1)/2);
-            //printf("%d\n", extra_edge);
-
-            // connect 2 random vertex and assign random weight
-            for (int i = 0; i < extra_edge; i++) {
-                int random_vertex = rand() % V;
-                int random_vertex_2 = rand() % V;
-                int random_weight = rand() % MAX_WEIGHT;
-
-                if (graph2[random_vertex][random_vertex_2] == 0) {
-                    addEdge(graph, random_vertex, random_vertex_2, random_weight);
-                    graph2[random_vertex][random_vertex_2] = random_weight;
-                    graph2[random_vertex_2][random_vertex] = random_weight;
+                    //printf("%d %d\n", random_vertex, random_weight);
                 }
 
-                else i--;
+                int extra_edge = MAX_EDGE? rand() % (V*(V-1)/2) : 0;
+                //printf("%d\n", extra_edge);
 
+                // connect 2 random vertex and assign random weight
+                for (int i = 0; i < extra_edge; i++) {
+                    int random_vertex = rand() % V;
+                    int random_vertex_2 = rand() % V;
+                    int random_weight = rand() % MAX_WEIGHT;
+
+                    if (graph2[random_vertex][random_vertex_2] == 0) {
+                        addEdge(graph, random_vertex, random_vertex_2, random_weight);
+                        graph2[random_vertex][random_vertex_2] = random_weight;
+                        graph2[random_vertex_2][random_vertex] = random_weight;
+                    }
+                    else i--;
+                }
+
+                t = clock();
+                dijkstra(graph, 0);     // address of graph, source
+                time_list += clock() - t;
+                
+
+                t = clock();
+                dijkstra_mat(graph2, 0);     // address of graph, source
+                time_mat += clock() - t;
             }
+            //printf("only got n-1 edges");
+            printf("V, time_list, time_mat, mat/list: %d, %fms, %fms, %f\n", V, ((float) time_list)/CLOCKS_PER_SEC*1000, ((float) time_mat)/CLOCKS_PER_SEC*1000, (float) time_mat/time_list);
 
-
-            t = clock();
-            dijkstra(graph, 0);     // address of graph, source
-            time_list += clock() - t;
-            
-
-            t = clock();
-            dijkstra_mat(graph2, 0);     // address of graph, source
-            time_mat += clock() - t;
         }
-        printf("only got n-1 edges");
-        printf("Time_list, mat, mat/list: %fms, %fms, %f\n", ((float) time_list)/CLOCKS_PER_SEC*1000, ((float) time_mat)/CLOCKS_PER_SEC*1000, (float) time_mat/time_list);
-
-        //printf("Dijkstra's (matrix): %fms\n", ((float) time_mat)/CLOCKS_PER_SEC*1000);
-        //printf("Ratio matrix / list time: %f\n", (float) time_mat/time_list);
     }
 
     return 0;

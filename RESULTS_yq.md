@@ -1,15 +1,30 @@
-### Weight 10k, repeat 100
-
-*factors to consider: |V|, |E|, weight*
+### Changing factors
+- value of V 
+- value of E
+- value of weight
+- number of repetitions
 
 ### Hypothesis
 Adj_matrix -> O(V^2)
 List with priority queue -> O(ElogV)
 
-Connected graph with extra edges, ratio of time_mat to time_list = 0.5-0.7
-Time: 0.4, 0.3
+> Dijkstra's algo with adjacency list and priority queue (D_list), dijkstra's algo with adjacency matrix and array (D_mat)
 
-Connected graph with no extra edges, ratio 0.5-0.9
-time: 0.3, 0.16
+1. D_list will be slower than D_mat when E is big
+
+2. Around the same when 40 < V < 100
+
+3. When E is maintained at V-1, D_list always outperforms D_mat (when V > 100?)
+
+4. 
+
+
+### Average case
+- when the number of edges are between n-1 and n(n-1)/2
+- D_list performs slower after V>200
+
+[Complexity graph](https://www.geogebra.org/calculator/b2kcb4nf)
+
+### Observation
 
 When edges is n-1, the ratio is 10 (list faster than mat)
