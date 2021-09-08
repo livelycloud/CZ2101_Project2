@@ -6,9 +6,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <time.h>
-#include <fstream>
 #include <vector>
-#include "main2.cpp" // bringing in the dijkstra's using adj matrix
 
 // A structure to represent a
 // node in adjacency list
@@ -386,7 +384,7 @@ int main()
 
         for (int i = 0; i < repeat; i++) {
             struct Graph* graph = createGraph(V); // dijkstra using adj list
-            int graph2[const_V][const_V] = {0};   // dijkstra using adj matrix
+            vector<vector<int>> graph2(V, vector<int> (V, 0))  // dijkstra using adj matrix
 
             // this will create a spanning tree / connected graph with n-1 edges (what abt more edges than this)
             for (int i = 1; i < V; i++) {

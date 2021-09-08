@@ -1,3 +1,8 @@
+/*This code purely runs both the dijkstra's algo with 2 methods without being ready to compare*/
+
+
+
+
 // C / C++ program for Dijkstra's
 // shortest path algorithm for adjacency
 // list representation of graph
@@ -6,8 +11,6 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <time.h>
-#include <fstream>
-#include <vector>
 #include "main2.cpp" // bringing in the dijkstra's using adj matrix
 
 // A structure to represent a
@@ -363,78 +366,51 @@ void dijkstra(struct Graph* graph, int src)
     }
  
     // print the calculated shortest distances
-    //printArr(dist, V);
+    printArr(dist, V);
 }
  
 // Driver program to test above functions
 int main()
 {   
     clock_t t;
-    srand(time(NULL));
-    
     // create the graph given in above fugure
-    int V = 500;    // rmb to change the V in main2
-    int MAX_WEIGHT, repeat;
-    printf("Enter max weight, repeat ");
-    scanf("%d %d", &MAX_WEIGHT, &repeat);
-
+    int V = 9;
+    struct Graph* graph = createGraph(V);
+    addEdge(graph, 0, 1, 4);    // source, destination, weight
+    addEdge(graph, 0, 7, 8);
+    addEdge(graph, 1, 2, 8);
+    addEdge(graph, 1, 7, 11);
+    addEdge(graph, 2, 3, 7);
+    addEdge(graph, 2, 8, 2);
+    addEdge(graph, 2, 5, 4);
+    addEdge(graph, 3, 4, 9);
+    addEdge(graph, 3, 5, 14);
+    addEdge(graph, 4, 5, 10);
+    addEdge(graph, 5, 6, 2);
+    addEdge(graph, 6, 7, 1);
+    addEdge(graph, 6, 8, 6);
+    addEdge(graph, 7, 8, 7);
     
+    t = clock();
+    dijkstra(graph, 0);     // address of graph, source
+    t = clock() - t;
+    printf("%fms\n", ((float)t)/CLOCKS_PER_SEC*1000);
 
-    // test worst case
-    for (int weight = 1; weight < MAX_WEIGHT; weight += 100){
-        int time_list = 0, time_mat = 0;    // start calc time for each weight
-
-        for (int i = 0; i < repeat; i++) {
-            struct Graph* graph = createGraph(V); // dijkstra using adj list
-            int graph2[const_V][const_V] = {0};   // dijkstra using adj matrix
-
-            // this will create a spanning tree / connected graph with n-1 edges (what abt more edges than this)
-            for (int i = 1; i < V; i++) {
-                int random_vertex = rand() % i; // connect to someone smaller
-                int random_weight = rand() % weight;
-                addEdge(graph, random_vertex, i, random_weight);    // add edge to the adj_list graph
-                // source, destination, weight
-                graph2[random_vertex][i] = random_weight;
-                graph2[i][random_vertex] = random_weight;
-
-                //printf("%d %d\n", random_vertex, random_weight);
-            }
-
-            int extra_edge = 0; //rand() % (V*(V-1)/2);
-            //printf("%d\n", extra_edge);
-
-            // connect 2 random vertex and assign random weight
-            for (int i = 0; i < extra_edge; i++) {
-                int random_vertex = rand() % V;
-                int random_vertex_2 = rand() % V;
-                int random_weight = rand() % MAX_WEIGHT;
-
-                if (graph2[random_vertex][random_vertex_2] == 0) {
-                    addEdge(graph, random_vertex, random_vertex_2, random_weight);
-                    graph2[random_vertex][random_vertex_2] = random_weight;
-                    graph2[random_vertex_2][random_vertex] = random_weight;
-                }
-
-                else i--;
-
-            }
-
-
-            t = clock();
-            dijkstra(graph, 0);     // address of graph, source
-            time_list += clock() - t;
-            
-
-            t = clock();
-            dijkstra_mat(graph2, 0);     // address of graph, source
-            time_mat += clock() - t;
-        }
-        printf("only got n-1 edges");
-        printf("Time_list, mat, mat/list: %fms, %fms, %f\n", ((float) time_list)/CLOCKS_PER_SEC*1000, ((float) time_mat)/CLOCKS_PER_SEC*1000, (float) time_mat/time_list);
-
-        //printf("Dijkstra's (matrix): %fms\n", ((float) time_mat)/CLOCKS_PER_SEC*1000);
-        //printf("Ratio matrix / list time: %f\n", (float) time_mat/time_list);
-    }
-
+    int graph2[const_V][const_V] = { { 0, 4, 0, 0, 0, 0, 0, 8, 0 },
+                        { 4, 0, 8, 0, 0, 0, 0, 11, 0 },
+                        { 0, 8, 0, 7, 0, 4, 0, 0, 2 },
+                        { 0, 0, 7, 0, 9, 14, 0, 0, 0 },
+                        { 0, 0, 0, 9, 0, 10, 0, 0, 0 },
+                        { 0, 0, 4, 14, 10, 0, 2, 0, 0 },
+                        { 0, 0, 0, 0, 0, 2, 0, 1, 6 },
+                        { 8, 11, 0, 0, 0, 0, 1, 0, 7 },
+                        { 0, 0, 2, 0, 0, 0, 6, 7, 0 } };
+ 
+    t = clock();
+    dijkstra_mat(graph2, 0);     // address of graph, source
+    t = clock() - t;
+    printf("%fms\n", ((float)t)/CLOCKS_PER_SEC*1000);
     return 0;
 }
+
+// change const_V in main2
