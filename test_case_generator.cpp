@@ -7,8 +7,8 @@ int adjM[MAXN][MAXN];
 
 int main() {
 
-    srand(2561);
-    int V = rand() % 30 + 10;
+    srand(2022);
+    int V = rand() % 5 + 10;
     int E = 0.3 * V * V;
 
     printf("%d %d\n", V, E);
