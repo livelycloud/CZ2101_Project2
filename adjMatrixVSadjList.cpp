@@ -37,25 +37,16 @@ int getMinM() { //return the index of the unvisited node with the shortest dista
 //V: number of nodes
 ll dijkstraMatrix(int s, int e) 
 {
-    //initialise pq
+    //initialise
     memset(visited, false, V);
-    memset(dis, POS_INF, sizeof(ll) * V);
+    memset(dis, POS_INF, sizeof(ll) * V); //initialization O(V)
 
-    for(int i = 0; i < V; i++) {
-        if(adjM[s][i] != 0){
-            dis[i] = adjM[s][i];
-        } else {
-            dis[i] = POS_INF;
-        }
-    }
 
-    visited[s] = true;
     dis[s] = 0;
-
     int numOfRounds = 0;
 
     //!visited[e] &&
-    while(numOfRounds < V - 1 ) {
+    while(numOfRounds < V) { //
         numOfRounds++; //need to complete V - 1 Rounds
         int node = getMinM(); //get  the index of the unvisited node with the shortest distance
 
@@ -82,7 +73,7 @@ vector<pi> adjList[MAXN];
 
 int V2pq[MAXN]; //record the index in pq of node i
 
-pi H[MAXN + 3]; //priority queue with heap, the first element is at pq[1]
+pi H[MAXN + 3]; //priority queue with heap, the first element is at H[1] (left child 2i, right child 2i+1)
 
 int pq_size;
 
@@ -127,7 +118,7 @@ void shiftUp(pi k) { //O(logn)
     V2pq[k.second] = j;
 }
 
-void update(pi k) {
+void update(pi k) { //inside heap
     int indexInpq = V2pq[k.second];
     if(H[indexInpq] <= k) return;
     else H[indexInpq] = k;
@@ -146,7 +137,10 @@ ll dijkstraList(int s, int e)
 {
     //initialise pq
     pq_size = 0;
-    memset(dis, -1, sizeof(ll) * V);
+
+    //here use distance used to record final distance
+    //if == -1, means the shortest distance has not been found
+    memset(dis, -1, sizeof(ll) * V); 
     memset(visited, false, V);
     initializePriorityQueue();
 
