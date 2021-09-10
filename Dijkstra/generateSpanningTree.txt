@@ -1,0 +1,27 @@
+for (int i = 1; i < V; i++) {
+                    int random_vertex = rand() % i; // connect to someone smaller
+                    int random_weight = rand() % MAX_WEIGHT;
+                    addEdge(graph, random_vertex, i, random_weight);    // add edge to the adj_list graph
+                    // source, destination, weight
+                    graph2[random_vertex][i] = random_weight;
+                    graph2[i][random_vertex] = random_weight;
+
+                    //printf("%d %d\n", random_vertex, random_weight);
+                }
+
+                int extra_edge = MAX_EDGE? rand() % (V*(V-1)/2) : 0;
+                //printf("%d\n", extra_edge);
+
+                // connect 2 random vertex and assign random weight
+                for (int i = 0; i < extra_edge; i++) {
+                    int random_vertex = rand() % V;
+                    int random_vertex_2 = rand() % V;
+                    int random_weight = rand() % MAX_WEIGHT;
+
+                    if (graph2[random_vertex][random_vertex_2] == 0) {
+                        addEdge(graph, random_vertex, random_vertex_2, random_weight);
+                        graph2[random_vertex][random_vertex_2] = random_weight;
+                        graph2[random_vertex_2][random_vertex] = random_weight;
+                    }
+                    else i--;
+                }

@@ -1,1 +1,1 @@
-run="g++ main.cpp ; ./a.out"
+run="g++ Dijkstra/main.cpp ; ./a.out"

@@ -1,3 +1,14 @@
+### To implement
+1. allow disconnected graph (hyp: D_list will outrun D_mat)
+2. add for loop for value of E
+3. analyse why is O(ElogV)
+4. understand binary heap
+
+### Graph
+- fix V=256, V = 1024
+- E = 0, E = V-1, E = V(V-1)/2
+
+
 ### Changing factors
 - value of V 
 - value of E
@@ -16,7 +27,8 @@ List with priority queue -> O(ElogV)
 
 3. When E is maintained at V-1, D_list always outperforms D_mat (when V > 100?)
 
-4. 
+
+
 
 
 ### Average case
@@ -28,3 +40,4 @@ List with priority queue -> O(ElogV)
 ### Observation
 
 When edges is n-1, the ratio is 10 (list faster than mat)
+

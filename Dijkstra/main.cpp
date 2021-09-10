@@ -7,6 +7,9 @@
 #include <limits.h>
 #include <time.h>
 #include <vector>
+#include <fstream>
+#include <math.h>
+
 using namespace std;
 
 // A structure to represent a
@@ -431,41 +434,32 @@ void dijkstra_mat(vector<vector<int>> &graph, int src)
 // Driver program to test above functions
 int main()
 {   
+    
     clock_t t;
     srand(time(NULL));
-    
+
+    ofstream outfile;
+    outfile.open(".csv");
+    outfile << "V,E,Time(list)/us,Time(matrix)/us" << endl;
+
     // create the graph given in above fugure
-    int MAX_WEIGHT, repeat, MAX_V, MAX_EDGE;    // input 1: max edge will have at most n(n-1)/2 edges, input 0: no extra edges
-    printf("Enter max V, max weight, repeat, max edge(1/0) ");
-    scanf("%d %d %d %d", &MAX_V, &MAX_WEIGHT, &repeat, &MAX_EDGE);
+    int MAX_WEIGHT = 100, repeat, MAX_V, MAX_EDGE;    // input 1: max edge will have at most n(n-1)/2 edges, input 0: no extra edges
+    printf("Enter max V, repeat: ");
+    scanf("%d %d", &MAX_V, &repeat);
 
     // later test worst case
 
-    for (int V = 2; V < MAX_V; V += 100) {
-        for (int weight = 1; weight < MAX_WEIGHT; weight += 100) {
-            int time_list = 0, time_mat = 0;    // start calc time for each weight
+    // V starts from 2
+    for (int V = 1024; V < MAX_V; V += 1) {
+        for (int edge = 0; edge < V * (V - 1) / 2 + 1; edge += pow(V,1.5)) {
+            float time_list = 0, time_mat = 0; // start cal time for each E
 
             for (int i = 0; i < repeat; i++) {
                 struct Graph* graph = createGraph(V); // dijkstra using adj list
                 vector<vector<int>> graph2(V, vector<int> (V, 0));  // dijkstra using adj matrix (vector)
 
-                // this will create a spanning tree / connected graph with n-1 edges (what abt more edges than this)
-                for (int i = 1; i < V; i++) {
-                    int random_vertex = rand() % i; // connect to someone smaller
-                    int random_weight = rand() % weight;
-                    addEdge(graph, random_vertex, i, random_weight);    // add edge to the adj_list graph
-                    // source, destination, weight
-                    graph2[random_vertex][i] = random_weight;
-                    graph2[i][random_vertex] = random_weight;
-
-                    //printf("%d %d\n", random_vertex, random_weight);
-                }
-
-                int extra_edge = MAX_EDGE? rand() % (V*(V-1)/2) : 0;
-                //printf("%d\n", extra_edge);
-
-                // connect 2 random vertex and assign random weight
-                for (int i = 0; i < extra_edge; i++) {
+                // generates "edge"
+                for (int i = 0; i < edge; i++) {
                     int random_vertex = rand() % V;
                     int random_vertex_2 = rand() % V;
                     int random_weight = rand() % MAX_WEIGHT;
@@ -488,8 +482,13 @@ int main()
                 time_mat += clock() - t;
             }
             //printf("only got n-1 edges");
-            printf("V, time_list, time_mat, mat/list: %d, %fms, %fms, %f\n", V, ((float) time_list)/CLOCKS_PER_SEC*1000, ((float) time_mat)/CLOCKS_PER_SEC*1000, (float) time_mat/time_list);
-
+            time_list = ((float) time_list)/CLOCKS_PER_SEC/repeat*1000000;
+            time_mat = ((float) time_mat)/CLOCKS_PER_SEC/repeat*1000000;
+            printf("V, E, time_list, time_mat: %d, %d, %fus, %fus\n", V, edge, time_list, time_mat);
+            
+            // Output to csv
+            
+            outfile << V << "," << edge << "," << time_list << "," << time_mat << endl;
         }
     }
 
